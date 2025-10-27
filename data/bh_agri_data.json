@@ -1,0 +1,328 @@
+{
+  "farmers": [
+    {
+      "id": 3,
+      "name": "Salman Bhanbhro",
+      "crop": "Wheat",
+      "area": "15 acres",
+      "incomes": [
+        {
+          "id": 1,
+          "amount": 160000,
+          "note": "Sale",
+          "date": "2025-05-22"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Kazim Bhanbhro",
+      "crop": "Wheat",
+      "area": "20 acre",
+      "incomes": [
+        {
+          "id": 1,
+          "amount": 300000,
+          "note": "Sale",
+          "date": "2025-05-22"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Asif Bhanbhro",
+      "crop": "Wheat",
+      "area": "30 acres",
+      "incomes": [
+        {
+          "id": 1,
+          "amount": 510000,
+          "note": "Sale",
+          "date": "2025-09-30"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Sajjad Bhanbhro",
+      "crop": "Wheat",
+      "area": "10 acres",
+      "incomes": [
+        {
+          "id": 1,
+          "amount": 280000,
+          "note": "Sale",
+          "date": "2025-02-25"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Kashif Bhanbhro",
+      "crop": "Wheat",
+      "area": "15",
+      "incomes": [
+        {
+          "id": 1,
+          "amount": 190000,
+          "note": "Sale",
+          "date": "2025-12-20"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Ajmal",
+      "crop": "Wheat",
+      "area": "18",
+      "incomes": [
+        {
+          "id": 1,
+          "amount": 242000,
+          "note": "Sale",
+          "date": "2025-06-22"
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Muzamil",
+      "crop": "Wheat",
+      "area": "12",
+      "incomes": [
+        {
+          "id": 1,
+          "amount": 150000,
+          "note": "Sale",
+          "date": "2025-01-22"
+        }
+      ]
+    }
+  ],
+  "expenses": [
+    {
+      "id": 1,
+      "farmerId": 3,
+      "category": "diesel 100 LTR",
+      "amount": 28000,
+      "note": "Dieset Tractor Laye",
+      "date": "2025-01-02"
+    },
+    {
+      "id": 2,
+      "farmerId": 3,
+      "category": "seed",
+      "amount": 50000,
+      "note": "",
+      "date": "2025-02-22"
+    },
+    {
+      "id": 3,
+      "farmerId": 3,
+      "category": "fertilizer",
+      "amount": 60000,
+      "note": "",
+      "date": "2025-02-20"
+    },
+    {
+      "id": 4,
+      "farmerId": 3,
+      "category": "labor",
+      "amount": 50000,
+      "note": "",
+      "date": "2025-01-05"
+    },
+    {
+      "id": 5,
+      "farmerId": 4,
+      "category": "diesel 180 ltr",
+      "amount": 52000,
+      "note": "",
+      "date": "2025-01-02"
+    },
+    {
+      "id": 6,
+      "farmerId": 4,
+      "category": "seed 14",
+      "amount": 65000,
+      "note": "",
+      "date": "2025-02-20"
+    },
+    {
+      "id": 7,
+      "farmerId": 4,
+      "category": "fertilizer",
+      "amount": 70000,
+      "note": "",
+      "date": "2025-02-25"
+    },
+    {
+      "id": 8,
+      "farmerId": 4,
+      "category": "labor",
+      "amount": 52000,
+      "note": "",
+      "date": "2025-02-12"
+    },
+    {
+      "id": 9,
+      "farmerId": 5,
+      "category": "diesel ",
+      "amount": 110000,
+      "note": "",
+      "date": "2025-01-25"
+    },
+    {
+      "id": 10,
+      "farmerId": 5,
+      "category": "seed",
+      "amount": 150000,
+      "note": "",
+      "date": "2025-01-22"
+    },
+    {
+      "id": 11,
+      "farmerId": 5,
+      "category": "fertilizer",
+      "amount": 55000,
+      "note": "",
+      "date": "2025-01-22"
+    },
+    {
+      "id": 12,
+      "farmerId": 5,
+      "category": "labor",
+      "amount": 120000,
+      "note": "",
+      "date": "2025-01-22"
+    },
+    {
+      "id": 13,
+      "farmerId": 6,
+      "category": "diesel ",
+      "amount": 60000,
+      "note": "",
+      "date": "2025-01-22"
+    },
+    {
+      "id": 14,
+      "farmerId": 6,
+      "category": "seed",
+      "amount": 70000,
+      "note": "",
+      "date": "2025-02-20"
+    },
+    {
+      "id": 15,
+      "farmerId": 6,
+      "category": "fertilizer",
+      "amount": 40000,
+      "note": "",
+      "date": "2025-02-22"
+    },
+    {
+      "id": 16,
+      "farmerId": 6,
+      "category": "labor",
+      "amount": 30000,
+      "note": "",
+      "date": "2025-02-22"
+    },
+    {
+      "id": 17,
+      "farmerId": 7,
+      "category": "diesel ",
+      "amount": 80000,
+      "note": "",
+      "date": "2025-01-22"
+    },
+    {
+      "id": 18,
+      "farmerId": 7,
+      "category": "seed",
+      "amount": 45000,
+      "note": "",
+      "date": "2025-03-12"
+    },
+    {
+      "id": 19,
+      "farmerId": 7,
+      "category": "fertilizer",
+      "amount": 32000,
+      "note": "",
+      "date": "2025-03-21"
+    },
+    {
+      "id": 20,
+      "farmerId": 7,
+      "category": "labor",
+      "amount": 45000,
+      "note": "",
+      "date": "2025-02-22"
+    },
+    {
+      "id": 21,
+      "farmerId": 8,
+      "category": "diesel ",
+      "amount": 60000,
+      "note": "",
+      "date": "2025-01-21"
+    },
+    {
+      "id": 22,
+      "farmerId": 8,
+      "category": "seed",
+      "amount": 52000,
+      "note": "",
+      "date": "2025-02-05"
+    },
+    {
+      "id": 23,
+      "farmerId": 8,
+      "category": "fertilizer",
+      "amount": 26000,
+      "note": "",
+      "date": "2025-02-24"
+    },
+    {
+      "id": 24,
+      "farmerId": 8,
+      "category": "labor",
+      "amount": 55000,
+      "note": "",
+      "date": "2025-03-20"
+    },
+    {
+      "id": 25,
+      "farmerId": 9,
+      "category": "diesel ",
+      "amount": 35000,
+      "note": "",
+      "date": "2025-01-22"
+    },
+    {
+      "id": 26,
+      "farmerId": 9,
+      "category": "seed",
+      "amount": 28000,
+      "note": "",
+      "date": "2025-01-22"
+    },
+    {
+      "id": 27,
+      "farmerId": 9,
+      "category": "fertilizer",
+      "amount": 25000,
+      "note": "",
+      "date": "2025-02-22"
+    },
+    {
+      "id": 28,
+      "farmerId": 9,
+      "category": "labor",
+      "amount": 35000,
+      "note": "",
+      "date": "2025-01-22"
+    }
+  ]
+}
