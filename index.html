@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>BH AGRICULTURE SYSTEM — Dashboard</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header class="topbar elegant">
+  <div class="left">
+    <div class="logo" onclick="navigateTo('index')">
+      <div class="logo-mark">🌾</div>
+      <div class="logo-text">
+        <div class="big">BH AGRICULTURE SYSTEM</div>
+        <div class="small">بی ایچ ایگریکلچر</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile toggle button -->
+  <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+
+  <nav class="nav">
+    <a href="index.html">Dashboard</a>
+    <a href="farmers.html">Farmers</a>
+    <a href="expenses.html">Expenses</a>
+    <a href="report.html">Backup</a>
+    <button id="themeToggle" class="btn-ghost">🌓</button>
+    <button id="logoutBtn" class="btn-ghost">🚪</button>
+  </nav>
+</header>
+
+<script>
+  function toggleMenu() {
+    document.querySelector('.nav').classList.toggle('active');
+  }
+</script>
+
+
+  <main class="container">
+    <!-- LOGIN -->
+    <section id="loginView" class="card center-card">
+      <h2>🔐 Admin Login — لاگ اِن</h2>
+      <form id="loginForm" class="stack narrow">
+        <input id="loginUser" placeholder="Username" value="admin" required>
+        <input id="loginPass" type="password" placeholder="Password" value="123" required>
+        <div class="row" style="justify-content:space-between;align-items:center">
+          <button class="btn" type="submit">Login</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- APP -->
+    <section id="appView" style="display:none">
+      <h1>📊 Dashboard — ڈیش بورڈ</h1>
+
+      <div class="cards">
+        <div class="card stat">
+          <div class="title">👨‍🌾 Farmers</div>
+          <div id="statFarmers" class="value">0</div>
+        </div>
+        <div class="card stat">
+          <div class="title">💵 Total Income</div>
+          <div id="statIncome" class="value">₨ 0</div>
+        </div>
+        <div class="card stat">
+          <div class="title">💸 Total Expense</div>
+          <div id="statExpense" class="value">₨ 0</div>
+        </div>
+        <div class="card stat">
+          <div class="title">📈 Net Profit</div>
+          <div id="statProfit" class="value">₨ 0</div>
+        </div>
+      </div>
+
+      <div class="card chart-card">
+        <h3>Profit by Farmer</h3>
+        <canvas id="profitChart"></canvas>
+      </div>
+
+      <div class="card">
+        <div class="row" style="justify-content:space-between; align-items:center">
+          <h3>Farmers</h3>
+          <div>
+            <input id="searchInput" class="search" placeholder="🔍 Search by name or crop">
+            <button id="printAllBtn" class="btn">🖨 Print Overall</button>
+          </div>
+        </div>
+        <div id="farmerList" class="list-grid" style="margin-top:12px"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="js/main.js"></script>
+  <script>
+    // page-specific bootstrap
+    document.addEventListener('DOMContentLoaded', () => {
+      BH.init(); // initialize storage & theme
+      // login handling
+      const form = document.getElementById('loginForm');
+      const loginView = document.getElementById('loginView');
+      const appView = document.getElementById('appView');
+
+      function showApp() {
+        loginView.style.display = 'none';
+        appView.style.display = 'block';
+        renderDashboard();
+      }
+      function showLogin() {
+        loginView.style.display = 'block';
+        appView.style.display = 'none';
+      }
+
+      if (BH.isLoggedIn()) showApp(); else showLogin();
+
+      form.addEventListener('submit', (e)=>{
+        e.preventDefault();
+        const u = document.getElementById('loginUser').value.trim();
+        const p = document.getElementById('loginPass').value.trim();
+        if (u === 'Jawad' && p === '1214') {
+          BH.login();
+          showApp();
+        } else alert('Invalid credentials — درست صارف نام یا پاس ورڈ');
+      });
+
+      document.getElementById('logoutBtn').addEventListener('click', ()=>{ BH.logout(); showLogin(); });
+
+      document.getElementById('themeToggle').addEventListener('click', ()=> BH.toggleTheme());
+      document.getElementById('searchInput').addEventListener('input', (e)=> renderFarmerCards(e.target.value));
+      document.getElementById('printAllBtn').addEventListener('click', ()=> Report.printOverall());
+
+      // initial render when logged in
+      if (BH.isLoggedIn()) {
+        renderDashboard();    
+        renderFarmerCards();
+      }
+    });
+  </script>
+</body>
+</html>
