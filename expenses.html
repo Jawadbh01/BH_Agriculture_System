@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>BH AGRICULTURE — Expenses</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header class="topbar elegant">
+  <div class="left">
+    <div class="logo" onclick="navigateTo('index')">
+      <div class="logo-mark">🌾</div>
+      <div class="logo-text">
+        <div class="big">BH AGRICULTURE SYSTEM</div>
+        <div class="small">بی ایچ ایگریکلچر</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile toggle button -->
+  <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+
+  <nav class="nav">
+    <a href="index.html">Dashboard</a>
+    <a href="farmers.html">Farmers</a>
+    <a href="expenses.html">Expenses</a>
+    <a href="report.html">Backup</a>
+    <button id="themeToggle" class="btn-ghost">🌓</button>
+    <button id="logoutBtn" class="btn-ghost">🚪</button>
+  </nav>
+</header>
+
+<script>
+  function toggleMenu() {
+    document.querySelector('.nav').classList.toggle('active');
+  }
+</script>
+
+
+  <main class="container">
+    <h1>💰 Expenses — اخراجات</h1>
+
+    <div class="card">
+      <h3>➕ Add Expense</h3>
+      <form id="addGlobalExpense" class="stack">
+        <select id="expFarmer" required></select>
+        <input type="date" id="expDate" required>
+        <input id="expAmount" type="number" placeholder="Amount (PKR)" required>
+        <input id="expCat" placeholder="Category (Fuel, Labor)" required>
+        <input id="expNote" placeholder="Note">
+        <div class="row"><button class="btn" type="submit">Add Expense</button></div>
+      </form>
+    </div>
+
+    <div class="card">
+      <h3>All Expenses</h3>
+      <table id="allExpenses" class="table">
+        <thead><tr><th>Farmer</th><th>Category</th><th>Amount</th><th>Date</th><th>Action</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="card chart-card">
+      <h3>Expense by Category</h3>
+      <canvas id="expenseChart"></canvas>
+    </div>
+  </main>
+
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+      if (!BH.isLoggedIn()) location.href='index.html';
+      document.getElementById('themeToggle').addEventListener('click', ()=> BH.toggleTheme());
+      document.getElementById('logoutBtn').addEventListener('click', ()=> { BH.logout(); location.href='index.html'; });
+
+      // init
+      fillFarmerSelect('expFarmer');
+      renderExpensesTable();
+      renderExpenseChart();
+
+      document.getElementById('addGlobalExpense').addEventListener('submit',(e)=>{
+        e.preventDefault();
+        const farmerId = Number(document.getElementById('expFarmer').value || 0);
+        const date = document.getElementById('expDate').value;
+        const amount = Number(document.getElementById('expAmount').value||0);
+        const category = document.getElementById('expCat').value.trim() || 'Other';
+        const note = document.getElementById('expNote').value.trim() || '';
+        if (!farmerId) return alert('Select farmer');
+        if (!amount) return alert('Enter amount');
+        BH.addExpense({ farmerId, category, amount, note, date });
+        e.target.reset();
+        renderExpensesTable();
+        renderExpenseChart();
+      });
+    });
+
+    function renderExpenseChart(){
+      const d = BH.getData();
+      const expenses = d.expenses || [];
+      const grouped = {};
+      expenses.forEach(e=> grouped[e.category] = (grouped[e.category]||0) + Number(e.amount||0));
+      const labels = Object.keys(grouped);
+      const data = labels.map(l => grouped[l]);
+      const ctx = document.getElementById('expenseChart').getContext('2d');
+      if (window._expChart) window._expChart.destroy();
+      window._expChart = new Chart(ctx, { type:'pie', data:{ labels, datasets:[{ data, backgroundColor: ['#ff8a65','#4db6ac','#ffd54f','#90caf9','#a1887f'] }]}, options:{ responsive:true } });
+    }
+
+    function renderExpensesTable(){
+      const tbody = document.querySelector('#allExpenses tbody');
+      tbody.innerHTML = '';
+      const d = BH.getData();
+      const farmers = d.farmers || [];
+      (d.expenses || []).forEach(e=>{
+        const fname = (farmers.find(f => f.id === e.farmerId) || {}).name || 'Unknown';
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${fname}</td><td>${e.category}</td><td>₨ ${Number(e.amount).toLocaleString()}</td><td>${e.date}</td>
+          <td><button class="btn small danger" onclick="if(confirm('Delete this expense?')){ BH.deleteExpense(${e.id}); renderExpensesTable(); renderExpenseChart(); renderDashboard(); }">Delete</button></td>`;
+        tbody.appendChild(tr);
+      });
+      fillFarmerSelect('expFarmer'); // refresh select
+    }
+
+    function fillFarmerSelect(id){
+      const sel = document.getElementById(id);
+      if(!sel) return;
+      const d = BH.getData();
+      sel.innerHTML = '<option value="">-- Select Farmer --</option>';
+      (d.farmers||[]).forEach(f => sel.innerHTML += `<option value="${f.id}">${f.name}</option>`);
+    }
+  </script>
+</body>
+</html>
