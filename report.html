@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>BH AGRICULTURE — Backup</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="css/style.css">
+<header class="topbar elegant">
+  <div class="left">
+    <div class="logo" onclick="navigateTo('index')">
+      <div class="logo-mark">🌾</div>
+      <div class="logo-text">
+        <div class="big">BH AGRICULTURE SYSTEM</div>
+        <div class="small">بی ایچ ایگریکلچر</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile toggle button -->
+  <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+
+  <nav class="nav">
+    <a href="index.html">Dashboard</a>
+    <a href="farmers.html">Farmers</a>
+    <a href="expenses.html">Expenses</a>
+    <a href="report.html">Backup</a>
+    <button id="themeToggle" class="btn-ghost">🌓</button>
+    <button id="logoutBtn" class="btn-ghost">🚪</button>
+  </nav>
+</header>
+
+<script>
+  function toggleMenu() {
+    document.querySelector('.nav').classList.toggle('active');
+  }
+</script>
+
+
+  <main class="container">
+    <h1>🧾 Backup & Restore</h1>
+
+    <div class="card">
+      <h3>Export data (download JSON)</h3>
+      <button id="exportBtn" class="btn">Export JSON</button>
+      <p class="hint">Save this file outside browser for permanent backup.</p>
+    </div>
+
+    <div class="card">
+      <h3>Import data (upload JSON)</h3>
+      <input type="file" id="importFile" accept=".json">
+      <p class="hint">Import a previously exported file to overwrite current data.</p>
+    </div>
+
+    <div class="card">
+      <h3>Danger Zone</h3>
+      <button id="resetBtn" class="btn danger">Reset All Data (delete)</button>
+      <p class="hint">This will delete all saved data. Export first if needed.</p>
+    </div>
+  </main>
+
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+      if (!BH.isLoggedIn()) location.href='index.html';
+      document.getElementById('themeToggle').addEventListener('click', ()=> BH.toggleTheme());
+      document.getElementById('logoutBtn').addEventListener('click', ()=> { BH.logout(); location.href='index.html'; });
+
+      document.getElementById('exportBtn').addEventListener('click', ()=>{
+        const data = BH.getData();
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type:'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = 'bh_agri_data.json'; a.click();
+        URL.revokeObjectURL(url);
+      });
+
+      document.getElementById('importFile').addEventListener('change', function(){
+        const file = this.files[0]; if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e)=>{
+          try {
+            const json = JSON.parse(e.target.result);
+            if (!confirm('Import will overwrite current data. Continue?')) return;
+            BH.saveData(json);
+            alert('Imported. Reloading...');
+            location.href='index.html';
+          } catch(err){ alert('Invalid JSON file'); }
+        };
+        reader.readAsText(file);
+      });
+
+      document.getElementById('resetBtn').addEventListener('click', ()=>{
+        if (!confirm('Delete ALL data? This cannot be undone.')) return;
+        BH.resetData();
+        alert('Reset done. Reloading...');
+        location.href='index.html';
+      });
+    });
+  </script>
+</body>
+</html>
