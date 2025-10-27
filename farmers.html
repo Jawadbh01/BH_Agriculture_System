@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>BH AGRICULTURE — Farmers</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="topbar elegant">
+  <div class="left">
+    <div class="logo" onclick="navigateTo('index')">
+      <div class="logo-mark">🌾</div>
+      <div class="logo-text">
+        <div class="big">BH AGRICULTURE SYSTEM</div>
+        <div class="small">بی ایچ ایگریکلچر</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile toggle button -->
+  <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+
+  <nav class="nav">
+    <a href="index.html">Dashboard</a>
+    <a href="farmers.html">Farmers</a>
+    <a href="expenses.html">Expenses</a>
+    <a href="report.html">Backup</a>
+    <button id="themeToggle" class="btn-ghost">🌓</button>
+    <button id="logoutBtn" class="btn-ghost">🚪</button>
+  </nav>
+</header>
+
+<script>
+  function toggleMenu() {
+    document.querySelector('.nav').classList.toggle('active');
+  }
+</script>
+
+
+  <main class="container">
+    <h1>👨‍🌾 Farmers — کسان</h1>
+
+    <div class="card">
+      <h3>➕ Add Farmer</h3>
+      <form id="addFarmerForm" class="stack">
+        <input id="f_name" placeholder="Full name (e.g., Ahmed)" required>
+        <input id="f_crop" placeholder="Crop (e.g., Wheat)">
+        <input id="f_area" placeholder="Area (e.g., 5 acres)">
+        <div class="row">
+          <button class="btn" type="submit">Add Farmer</button>
+          <button class="btn small" type="button" onclick="location.href='index.html'">Back</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card">
+      <h3>Farmer List</h3>
+      <input id="filterInput" class="search" placeholder="🔍 Filter by name or crop">
+      <table id="farmerTable" class="table">
+        <thead><tr><th>Name</th><th>Crop</th><th>Area</th><th>Action</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </main>
+
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+      if (!BH.isLoggedIn()) location.href='index.html';
+      document.getElementById('themeToggle').addEventListener('click', ()=> BH.toggleTheme());
+      document.getElementById('logoutBtn').addEventListener('click', ()=> { BH.logout(); location.href='index.html'; });
+
+      // add farmer
+      document.getElementById('addFarmerForm').addEventListener('submit', (e)=>{
+        e.preventDefault();
+        const name = document.getElementById('f_name').value.trim();
+        if (!name) return alert('Name required');
+        const crop = document.getElementById('f_crop').value.trim();
+        const area = document.getElementById('f_area').value.trim();
+        BH.addFarmer({ name, crop, area });
+        e.target.reset();
+        renderFarmersTable();
+      });
+
+      document.getElementById('filterInput').addEventListener('input', (e)=> renderFarmersTable(e.target.value));
+      renderFarmersTable();
+    });
+  </script>
+</body>
+</html>
