@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>BH AGRICULTURE — Farmer</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header class="topbar elegant">
+  <div class="left">
+    <div class="logo" onclick="navigateTo('index')">
+      <div class="logo-mark">🌾</div>
+      <div class="logo-text">
+        <div class="big">BH AGRICULTURE SYSTEM</div>
+        <div class="small">بی ایچ ایگریکلچر</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile toggle button -->
+  <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+
+  <nav class="nav">
+    <a href="index.html">Dashboard</a>
+    <a href="farmers.html">Farmers</a>
+    <a href="expenses.html">Expenses</a>
+    <a href="report.html">Backup</a>
+    <button id="themeToggle" class="btn-ghost">🌓</button>
+    <button id="logoutBtn" class="btn-ghost">🚪</button>
+  </nav>
+</header>
+
+<script>
+  function toggleMenu() {
+    document.querySelector('.nav').classList.toggle('active');
+  }
+</script>
+
+
+  <main class="container">
+    <div id="content"></div>
+  </main>
+
+  <script src="js/main.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', ()=>{
+      if (!BH.isLoggedIn()) location.href='index.html';
+      document.getElementById('themeToggle').addEventListener('click', ()=> BH.toggleTheme());
+      document.getElementById('logoutBtn').addEventListener('click', ()=> { BH.logout(); location.href='index.html'; });
+
+      const params = new URLSearchParams(location.search);
+      const id = Number(params.get('id'));
+      if (!id) { alert('No farmer selected'); location.href='farmers.html'; return; }
+
+      // render the farmer detail view
+      function render(){
+        const f = BH.getFarmer(id);
+        if (!f) { alert('Farmer not found'); location.href='farmers.html'; return; }
+        const incomes = (f.incomes||[]);
+        const expenses = BH.getExpensesForFarmer(id);
+        const incomeTotal = incomes.reduce((s,i)=> s + Number(i.amount||0),0);
+        const expenseTotal = expenses.reduce((s,e)=> s + Number(e.amount||0),0);
+        const profit = incomeTotal - expenseTotal;
+
+        document.getElementById('content').innerHTML = `
+          <h1>👨‍🌾 ${f.name}</h1>
+          <div class="card">
+            <p><strong>Crop:</strong> ${f.crop||'-'} &nbsp; • &nbsp; <strong>Area:</strong> ${f.area||'-'}</p>
+            <div class="row" style="margin-top:8px">
+              <button class="btn" id="editProfile">✏️ Edit</button>
+              <button class="btn" id="printFarmer">🖨 Print</button>
+              <button class="btn danger" id="deleteFarmerBtn">❌ Delete Farmer</button>
+            </div>
+            <p style="margin-top:10px"><strong>Income:</strong> ${formatPKR(incomeTotal)} &nbsp; | &nbsp; <strong>Expense:</strong> ${formatPKR(expenseTotal)} &nbsp; | &nbsp; <strong>Profit:</strong> ${formatPKR(profit)}</p>
+          </div>
+
+          <div class="card">
+            <h3>➕ Add Income</h3>
+            <form id="addIncomeForm" class="stack">
+              <input type="date" id="incomeDate" required>
+              <input id="incomeAmount" type="number" placeholder="Amount (PKR)" required>
+              <input id="incomeNote" placeholder="Note (e.g., sale)">
+              <div class="row"><button class="btn" type="submit">Add Income</button></div>
+            </form>
+            <h4>Incomes</h4>
+            <ul id="incomeList"></ul>
+          </div>
+
+          <div class="card">
+            <h3>➕ Add Expense</h3>
+            <form id="addExpenseForm" class="stack">
+              <input type="date" id="expenseDate" required>
+              <input id="expenseAmount" type="number" placeholder="Amount (PKR)" required>
+              <input id="expenseCategory" placeholder="Category (Fuel, Labor)" required>
+              <input id="expenseNote" placeholder="Note">
+              <div class="row"><button class="btn" type="submit">Add Expense</button></div>
+            </form>
+            <h4>Expenses</h4>
+            <ul id="expenseList"></ul>
+          </div>
+
+          <div class="card chart-card">
+            <h3>Income vs Expense</h3>
+            <canvas id="farmerChart"></canvas>
+          </div>
+        `;
+
+        // list incomes
+const incUL = document.getElementById('incomeList');
+incUL.innerHTML = '';
+incomes.forEach(i => {
+  const li = document.createElement('li');
+  li.innerHTML = `
+    📅 <input type="date" value="${i.date}" disabled class="inline-edit date">
+    — ₨ <input type="number" value="${i.amount}" disabled class="inline-edit amount">
+    — <input type="text" value="${i.note || ''}" disabled class="inline-edit note">
+    <button class="btn small danger" onclick="deleteIncomeInstant(${id}, ${i.id}, this)">Delete</button>
+  `;
+  incUL.appendChild(li);
+});
+
+// list expenses
+const expUL = document.getElementById('expenseList');
+expUL.innerHTML = '';
+expenses.forEach(e => {
+  const li = document.createElement('li');
+  li.innerHTML = `
+    📅 <input type="date" value="${e.date}" disabled class="inline-edit date">
+    — ₨ <input type="number" value="${e.amount}" disabled class="inline-edit amount">
+    — <input type="text" value="${e.category || ''}" disabled class="inline-edit cat">
+    — <input type="text" value="${e.note || ''}" disabled class="inline-edit note">
+    <button class="btn small danger" onclick="deleteExpenseInstant(${e.id}, this)">Delete</button>
+  `;
+  expUL.appendChild(li);
+});
+
+
+        // chart
+        const ctx = document.getElementById('farmerChart').getContext('2d');
+        const labels = ['Income','Expense'];
+        const values = [incomeTotal, expenseTotal];
+        if (window._farmerChart) window._farmerChart.destroy();
+        window._farmerChart = new Chart(ctx, { type:'bar', data:{ labels, datasets:[{ label:'PKR', data: values, backgroundColor:['#4caf50','#ff9800'] }]}, options:{ responsive:true }});
+
+        // handlers
+        document.getElementById('addIncomeForm').addEventListener('submit',(e)=>{
+          e.preventDefault();
+          const date = document.getElementById('incomeDate').value;
+          const amount = Number(document.getElementById('incomeAmount').value||0);
+          const note = document.getElementById('incomeNote').value || '';
+          if (!amount) return alert('Enter amount');
+          BH.addIncome(id, { amount, note, date });
+          render();
+        });
+        document.getElementById('addExpenseForm').addEventListener('submit',(e)=>{
+          e.preventDefault();
+          const date = document.getElementById('expenseDate').value;
+          const amount = Number(document.getElementById('expenseAmount').value||0);
+          const category = document.getElementById('expenseCategory').value || 'Other';
+          const note = document.getElementById('expenseNote').value || '';
+          if (!amount) return alert('Enter amount');
+          BH.addExpense({ farmerId:id, category, amount, note, date });
+          render();
+        });
+
+        document.getElementById('printFarmer').addEventListener('click', ()=> Report.printFarmer(id));
+
+        document.getElementById('deleteFarmerBtn').addEventListener('click', ()=>{
+          if (!confirm('Delete farmer and all related expenses?')) return;
+          BH.deleteFarmer(id);
+          alert('Deleted. Returning to farmers list.');
+          location.href='farmers.html';
+        });
+
+        document.getElementById('editProfile').addEventListener('click', ()=>{
+          // simple inline edit modal
+          const newName = prompt('Edit name:', f.name);
+          if (newName === null) return;
+          const newCrop = prompt('Edit crop:', f.crop || '');
+          const newArea = prompt('Edit area:', f.area || '');
+          BH.updateFarmer(id, { name: newName.trim() || f.name, crop: newCrop.trim(), area: newArea.trim() });
+          render();
+        });
+      } // end render
+
+      render();
+    }); // DOMContentLoaded
+
+      // --- delete instantly without refresh ---
+function deleteIncomeInstant(fid, iid, btn) {
+  if (!confirm("Delete this income?")) return;
+  BH.deleteIncome(fid, iid);
+  btn.closest("li").remove();
+}
+
+function deleteExpenseInstant(id, btn) {
+  if (!confirm("Delete this expense?")) return;
+  BH.deleteExpense(id);
+  btn.closest("li").remove();
+}
+
+// // --- inline edit toggle ---
+// function toggleEditIncome(fid, iid, btn) {
+//   const li = btn.closest("li");
+//   const inputs = li.querySelectorAll("input");
+//   const editing = btn.textContent.includes("Save");
+
+//   if (editing) {
+//     // save updates
+//     const d = BH.load();
+//     const farmer = d.farmers.find(x => x.id === fid);
+//     if (farmer) {
+//       const income = farmer.incomes.find(i => i.id === iid);
+//       if (income) {
+//         income.date = inputs[0].value;
+//         income.amount = Number(inputs[1].value);
+//         income.note = inputs[2].value;
+//       }
+//       BH.save(d);
+//     }
+//     btn.textContent = "✏️ Edit";
+//     inputs.forEach(i => i.disabled = true);
+//   } else {
+//     // enable editing
+//     btn.textContent = "💾 Save";
+//     inputs.forEach(i => i.disabled = false);
+//   }
+// }
+
+// function toggleEditExpense(id, btn) {
+//   const li = btn.closest("li");
+//   const inputs = li.querySelectorAll("input");
+//   const editing = btn.textContent.includes("Save");
+
+//   if (editing) {
+//     const d = BH.load();
+//     const exp = d.expenses.find(e => e.id === id);
+//     if (exp) {
+//       exp.date = inputs[0].value;
+//       exp.amount = Number(inputs[1].value);
+//       exp.category = inputs[2].value;
+//       exp.note = inputs[3].value;
+//       BH.save(d);
+//     }
+//     btn.textContent = "✏️ Edit";
+//     inputs.forEach(i => i.disabled = true);
+//   } else {
+//     btn.textContent = "💾 Save";
+//     inputs.forEach(i => i.disabled = false);
+//   }
+// }
+
+
+
+
+    // small helper
+    function formatPKR(v){ return '₨ ' + Number(v||0).toLocaleString(); }
+  </script>
+</body>
+</html>
