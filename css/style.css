@@ -1,0 +1,266 @@
+/* css/style.css */
+/* Variables */
+:root{
+  --bg: #f6fbf6;
+  --card: #fff;
+  --text: #123818;
+  --muted: #6b6b6b;
+  --accent: #2e7d32;
+  --accent-2: #66bb6a;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .25s,color .25s}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;background:linear-gradient(180deg,rgba(255,255,255,0.6),rgba(255,255,255,0.4));border-bottom:1px solid rgba(0,0,0,0.04)}
+.topbar.elegant{backdrop-filter: blur(2px)}
+.logo{display:flex;align-items:center;gap:10px;cursor:pointer}
+.logo-mark{font-size:24px}
+.logo-text .big{font-weight:800}
+.logo-text .small{font-size:12px;color:var(--muted)}
+.nav{display:flex;gap:12px;align-items:center}
+.nav a{color:var(--accent);text-decoration:none;font-weight:600;padding:8px;border-radius:8px}
+.btn-ghost{background:transparent;border:1px solid rgba(0,0,0,0.06);padding:6px 8px;border-radius:8px;cursor:pointer}
+.container{max-width:1100px;margin:18px auto;padding:0 16px}
+.center-card{display:flex;align-items:center;justify-content:center;height:70vh}
+.card{background:var(--card);border-radius:12px;padding:16px;margin-bottom:18px;box-shadow:0 8px 26px rgba(0,0,0,0.06)}
+.card:hover{transform:translateY(-3px)}
+.stack{display:flex;flex-direction:column;gap:8px}
+.row{display:flex;gap:8px;align-items:center}
+input,select,textarea{padding:10px;border-radius:8px;border:1px solid #e8f0e8}
+.btn{background:var(--accent);color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer;}
+.btn.small{padding:6px 8px;background:transparent;border:1px solid rgba(255, 0, 0, 0.06);color:var(--accent);}
+.btn.small.danger{padding:6px 8px;background:transparent;border:1px solid rgba(18, 15, 15, 0.06);color:var(--accent); color: #e53935;}
+.btn.danger{background:#e53935}
+.hint{color:var(--muted);font-size:13px}
+.cards{display:flex;gap:12px;flex-wrap:wrap}
+.card.small{flex:1;text-align:center}
+.title{font-weight:700}
+.stat .title{font-weight:700;color:var(--muted)}
+.stat .value{font-size:1.3rem;font-weight:800;color:var(--accent-2);margin-top:8px}
+.list-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.farmer-card{padding:12px;border-radius:10px;background:linear-gradient(180deg,#ffffff,#fbfff9);box-shadow:0 6px 12px rgba(0,0,0,0.04)}
+.search{padding:8px;border-radius:8px;border:1px solid #ddd}
+.table{width:100%;border-collapse:collapse}
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px;border-bottom:1px solid #eef7ee;text-align:left}
+.chart-card{padding:18px}
+#printAllBtn{margin-top: 20px;}
+
+
+
+
+
+
+/* small helpers */
+.center{text-align:center}
+.narrow{max-width:380px}
+
+/* dark theme */
+body.dark{--bg:#0f1720;--card:#111827;--text:#e6eef0;--muted:#9aa6a6;--accent:#81c784;--accent-2:#66bb6a}
+body.dark .topbar{background:linear-gradient(180deg,rgba(20,20,20,0.8),rgba(20,20,20,0.6))}
+body.dark input, body.dark select, body.dark textarea{background:#121212;color:var(--text);border:1px solid #222}
+body.dark .card{background:var(--card);box-shadow:0 14px 30px rgba(0,0,0,0.6)}
+body.dark .farmer-card{background:var(--card);box-shadow:0 14px 30px rgba(0,0,0,0.6)}
+body.dark .table {background:var(--card);box-shadow:0 14px 30px rgba(0,0,0,0.6);}
+body.dark .table a {background:var(--card);box-shadow:0 14px 30px rgba(0,0,0,0.6); color: #ddd; text-decoration: none;}
+
+  * {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition: background 0.25s, color 0.25s;
+}
+
+/* Navbar Layout */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(255,255,255,0.4));
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+
+.topbar.elegant {
+  backdrop-filter: blur(2px);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.logo-mark {
+  font-size: 24px;
+}
+
+.logo-text .big {
+  font-weight: 800;
+}
+
+.logo-text .small {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* Navbar Links */
+.nav {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.nav a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.btn-ghost {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+/* Mobile Menu Toggle Button */
+.menu-toggle {
+  display: none;
+  font-size: 26px;
+  cursor: pointer;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+  }
+
+  .nav {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    background: rgba(255,255,255,0.95);
+    position: absolute;
+    top: 60px;
+    left: 0;
+    padding: 10px 0;
+    border-top: 1px solid rgba(0,0,0,0.1);
+  }
+
+  .nav a, .btn-ghost {
+    text-align: center;
+    padding: 12px;
+    width: 100%;
+  }
+
+  .nav.active {
+    display: flex;
+  }
+}
+.card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease;
+}
+.card:hover {
+  transform: translateY(-6px);
+}
+
+
+
+/* print rules (used by print windows opened by Report) */
+
+
+
+
+@media print {
+  body {
+    -webkit-print-color-adjust: exact !important; /* Chrome, Safari */
+    print-color-adjust: exact !important; /* Standard property for Firefox & modern browsers */
+  }
+}
+
+/* 🌿 Responsive layout for mobile screens */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+
+  h1, h3, h4 {
+    font-size: 1.2rem;
+    text-align: center;
+  }
+
+  .card {
+    padding: 12px;
+    margin-bottom: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+
+  .row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  button, input {
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  input {
+    padding: 8px;
+  }
+
+  ul {
+    padding-left: 0;
+  }
+
+  ul li {
+    list-style: none;
+    background: #f8f8f8;
+    padding: 8px;
+    margin: 6px 0;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .btn.small {
+    width: auto;
+    font-size: 0.85rem;
+    padding: 5px 8px;
+  }
+
+  canvas {
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  .chart-card {
+    overflow-x: auto;
+  }
+}
+
+/* Make forms look better on all screen sizes */
+form.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
